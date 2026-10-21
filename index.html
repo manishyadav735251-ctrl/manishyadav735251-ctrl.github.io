@@ -1,10 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
-    <title>My First Website</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manish Yadav | Personal Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            text-decoration: none;
+            color: #fff;
+            background: #334155;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4);
+        }
+    </style>
 </head>
-<body style="text-align: center; font-family: sans-serif; padding-top: 50px;">
-    <h1>Welcome to My Website!</h1>
-    <p>Created by Manish Yadav</p>
+<body>
+
+    <div class="card">
+        <div class="profile-img">👨‍💻</div>
+        <h1>Manish Yadav</h1>
+        <p>Creator & Developer | Welcome to my digital space!</p>
+
+        <div class="links">
+            <a href="https://youtube.com" target="_blank" class="btn">▶ YouTube Channel</a>
+            <a href="#" class="btn">📁 My Projects</a>
+            <a href="#" class="btn">✉️ Contact Me</a>
+        </div>
+    </div>
+
 </body>
 </html>
