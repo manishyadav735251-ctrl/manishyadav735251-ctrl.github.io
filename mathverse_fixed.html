@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d1d">
+<title>MATHVERSE - Ultimate Math Game</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080d1d;--panel:#141f38;--cyan:#00e5ff;--green:#21e69a;--red:#ff4567}
+body{min-height:100vh;padding:14px;background:radial-gradient(circle at top,#1b315b,#080d1d 65%);color:#fff;font-family:Arial,sans-serif}
+button,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:950px;margin:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 4px 22px}
+.logo{font-size:24px;font-weight:900;letter-spacing:2px}.logo span{color:var(--cyan)}
+.coins{background:#202e4c;padding:10px 14px;border-radius:20px;color:#ffe56b;font-weight:bold}
+.screen{display:none}.screen.active{display:block}
+.hero{text-align:center;padding:28px 5px 22px}.hero h1{font-size:clamp(30px,7vw,52px)}.hero h1 span{color:var(--cyan)}.hero p,.muted{color:#a9bad4;margin-top:10px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}
+.stat,.panel{background:linear-gradient(145deg,#192844,#111a30);border:1px solid #293d61;border-radius:18px;padding:16px;box-shadow:0 10px 25px #0004}
+.stat{text-align:center}.stat small{color:#91a4c5}.stat strong{display:block;font-size:23px;margin-top:7px}
+.section-title{font-size:21px;margin:28px 0 15px}
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.mode{min-height:165px;padding:18px;border-radius:20px;border:1px solid #35496c;background:linear-gradient(145deg,#202f50,#131d35);text-align:left;color:white;transition:.2s}
+.mode:active{transform:scale(.98)}.mode .emoji{font-size:38px}.mode h3{font-size:19px;margin:12px 0 7px}.mode p{font-size:12px;color:#b7c5dc;line-height:1.5}
+.mode:nth-child(2){background:linear-gradient(145deg,#442a75,#19203e)}.mode:nth-child(3){background:linear-gradient(145deg,#075b65,#17213d)}.mode:nth-child(4){background:linear-gradient(145deg,#70431e,#22213a)}.mode:nth-child(5){background:linear-gradient(145deg,#70254c,#1c1c3c)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:12px 0 20px}.topbar h2{font-size:22px}
+.back{background:#263958;color:white;border:1px solid #405477;padding:10px 14px;border-radius:10px}
+.game-panel{background:linear-gradient(145deg,#182846,#101a30);border:1px solid #2b4267;border-radius:22px;padding:20px;max-width:700px;margin:15px auto;text-align:center}
+.game-stats{display:flex;justify-content:space-around;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.game-stats div{background:#263858;padding:10px 14px;border-radius:12px}
+.question{font-size:clamp(28px,7vw,44px);font-weight:900;padding:30px 4px;color:var(--cyan);overflow-wrap:anywhere}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:18px 0}
+.answer{background:#243553;border:1px solid #405779;border-radius:14px;padding:16px 8px;color:white;font-size:21px;font-weight:bold;min-height:62px;overflow-wrap:anywhere}
+.answer:disabled{opacity:1;cursor:default}.answer.good{background:#087b51;border-color:#21e69a}.answer.bad{background:#a32c48;border-color:#ff4567}
+.primary{background:linear-gradient(100deg,#00cce9,#5978ff);border:0;border-radius:12px;padding:14px 20px;font-weight:bold;color:white;font-size:16px}
+.wide{width:100%;margin-top:12px}
+.message{min-height:28px;color:var(--green);font-weight:bold;margin:10px 0}
+.progress{height:8px;background:#2a3a58;border-radius:20px;overflow:hidden;margin:14px 0}.progress div{height:100%;background:var(--cyan);width:100%;transition:width .2s}
+select{padding:12px;background:#263958;color:white;border:1px solid #53698c;border-radius:10px;width:100%;margin:8px 0}
+.match-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:20px 0}
+.match-card{min-height:90px;border:1px solid #52648a;border-radius:13px;background:linear-gradient(145deg,#314568,#1c2b49);color:white;font-size:18px;font-weight:bold;padding:7px;overflow-wrap:anywhere}
+.match-card.selected{border:2px solid var(--cyan);background:#14506b}.match-card.matched{visibility:hidden}
+.cricket-field{background:repeating-linear-gradient(0deg,#168c62 0 35px,#137c57 35px 70px);border:4px solid #a2e9a8;border-radius:20px;padding:20px 10px;margin:15px 0}
+.pitch{background:#b78a50;border:2px solid #e8c28a;border-radius:50%;padding:14px;margin:15px auto;max-width:210px}.batsman{font-size:58px}
+.scoreboard{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:15px 0}.scorebox{background:#253955;border-radius:12px;padding:11px;font-size:12px}.scorebox strong{display:block;font-size:23px;margin-top:5px}
+.rap-card{background:linear-gradient(140deg,#57255f,#192347);border:1px solid #c15ce9;border-radius:18px;padding:20px;margin:15px 0}
+.rap-label{color:#f6a5ff;font-weight:bold;letter-spacing:3px}.rap-line{font-size:22px;line-height:1.6;font-weight:bold;margin:18px 0;white-space:pre-line}
+footer{text-align:center;color:#71819d;padding:28px 5px;font-size:12px}
+@media(min-width:700px){.modes{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:380px){body{padding:9px}.match-grid{gap:5px}.match-card{font-size:15px;min-height:75px}.game-panel{padding:14px}.mode{padding:14px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">MATH<span>VERSE</span> ⚡</div><div class="coins">🪙 <span id="coins">0</span></div></header>
+
+<section id="home" class="screen active">
+ <div class="hero"><h1>ENTER THE <span>MATHVERSE</span></h1><p>Play Smart • Think Fast • Become a Champion</p></div>
+ <div class="stats">
+  <div class="stat"><small>🏆 BEST SCORE</small><strong id="best">0</strong></div>
+  <div class="stat"><small>🎮 GAMES PLAYED</small><strong id="played">0</strong></div>
+  <div class="stat"><small>⭐ TOTAL XP</small><strong id="xp">0</strong></div>
+ </div>
+ <h2 class="section-title">CHOOSE YOUR GAME 🎮</h2>
+ <div class="modes">
+  <button class="mode" onclick="openGame('battle')"><div class="emoji">⚡</div><h3>Math Battle</h3><p>Race against time and build combos.</p></button>
+  <button class="mode" onclick="openGame('match')"><div class="emoji">🧩</div><h3>Math Match</h3><p>Match each question with its answer.</p></button>
+  <button class="mode" onclick="openGame('cricket')"><div class="emoji">🏏</div><h3>Math Cricket</h3><p>Score runs by answering correctly.</p></button>
+  <button class="mode" onclick="openGame('advanced')"><div class="emoji">🧠</div><h3>Advanced Maths</h3><p>Percentage, powers, roots, fractions and algebra.</p></button>
+  <button class="mode" onclick="openGame('rap')"><div class="emoji">🎤</div><h3>Rap Math</h3><p>Read the rap, calculate and tap the answer.</p></button>
+ </div>
+</section>
+
+<section id="battle" class="screen">
+ <div class="topbar"><button class="back" onclick="home()">← HOME</button><h2>⚡ Math Battle</h2></div>
+ <div class="game-panel">
+  <select id="battleLevel"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option><option value="expert">Expert</option></select>
+  <div class="game-stats"><div>⭐ <span id="bScore">0</span></div><div>⏱️ <span id="bTime">15</span>s</div><div>❤️ <span id="bLives">3</span></div></div>
+  <div class="progress"><div id="bBar"></div></div><div class="question" id="bQuestion">Ready?</div>
+  <div class="answers" id="bAnswers"></div><div class="message" id="bMessage">Press Start Battle!</div>
+  <button class="primary wide" id="bStart" onclick="startBattle()">START BATTLE</button>
+ </div>
+</section>
+
+<section id="match" class="screen">
+ <div class="topbar"><button class="back" onclick="home()">← HOME</button><h2>🧩 Math Match</h2></div>
+ <div class="game-panel">
+  <div class="game-stats"><div>Pairs: <span id="mPairs">0/6</span></div><div>Moves: <span id="mMoves">0</span></div></div>
+  <p class="muted">Question aur uska answer milao!</p><div class="match-grid" id="matchGrid"></div>
+  <div class="message" id="mMessage">Press New Match Game!</div><button class="primary wide" onclick="startMatch()">NEW MATCH GAME</button>
+ </div>
+</section>
+
+<section id="cricket" class="screen">
+ <div class="topbar"><button class="back" onclick="home()">← HOME</button><h2>🏏 Math Cricket</h2></div>
+ <div class="game-panel">
+  <div class="cricket-field"><h2>🏟️ MATH PREMIER LEAGUE</h2><div class="pitch"><div class="batsman" id="batsman">🏏</div><p>BATSMAN</p></div><h3 id="cricketAction">Ready to Bat!</h3></div>
+  <div class="scoreboard"><div class="scorebox">RUNS<strong id="runs">0</strong></div><div class="scorebox">WICKETS<strong id="wickets">0</strong></div><div class="scorebox">BALLS<strong id="balls">0/12</strong></div></div>
+  <div class="question" id="cQuestion">Ready?</div><div class="answers" id="cAnswers"></div><div class="message" id="cMessage">Press Start Match!</div>
+  <button class="primary wide" onclick="startCricket()" id="cStart">START MATCH 🏏</button>
+ </div>
+</section>
+
+<section id="advanced" class="screen">
+ <div class="topbar"><button class="back" onclick="home()">← HOME</button><h2>🧠 Advanced Maths</h2></div>
+ <div class="game-panel">
+  <select id="advTopic"><option value="all">All Topics</option><option value="percent">Percentage</option><option value="square">Squares & Roots</option><option value="power">Exponents</option><option value="fraction">Fractions</option><option value="algebra">Algebra</option></select>
+  <div class="game-stats"><div>⭐ <span id="aScore">0</span></div><div>Question <span id="aCount">0</span>/10</div></div>
+  <div class="question" id="aQuestion">Choose a topic</div><div class="answers" id="aAnswers"></div><div class="message" id="aMessage">Press Start Challenge!</div>
+  <button class="primary wide" onclick="startAdvanced()">START CHALLENGE</button>
+ </div>
+</section>
+
+<section id="rap" class="screen">
+ <div class="topbar"><button class="back" onclick="home()">← HOME</button><h2>🎤 Rap Math</h2></div>
+ <div class="game-panel">
+  <div class="game-stats"><div>🔥 STREAK <span id="rStreak">0</span></div><div>⭐ SCORE <span id="rScore">0</span></div></div>
+  <div class="rap-card"><div class="rap-label">🎵 MATH RAP CHALLENGE</div><div class="rap-line" id="rapLine">Ready to calculate?</div><p class="muted">Rap padho • Solve karo • Answer tick karo!</p></div>
+  <div class="answers" id="rAnswers"></div><div class="message" id="rMessage">Press Start Rap!</div>
+  <button class="primary wide" onclick="startRap()">START RAP 🔥</button>
+ </div>
+</section>
+<footer>MATHVERSE © 2026 • TRAIN YOUR BRAIN</footer>
+</div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const rand=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+const shuffle=arr=>arr.sort(()=>Math.random()-.5);
+let best=Number(localStorage.getItem("mvBest"))||0;
+let xp=Number(localStorage.getItem("mvXP"))||0;
+let coins=Number(localStorage.getItem("mvCoins"))||0;
+let played=Number(localStorage.getItem("mvPlayed"))||0;
+let timers=[],session=0,battleTimer=null;
+function refresh(){
+ $("best").textContent=best;$("xp").textContent=xp;$("coins").textContent=coins;$("played").textContent=played;
+}
+function reward(points){
+ xp+=points;coins+=Math.max(1,Math.floor(points/5));played++;
+ if(points>best)best=points;
+ localStorage.setItem("mvBest",best);localStorage.setItem("mvXP",xp);
+ localStorage.setItem("mvCoins",coins);localStorage.setItem("mvPlayed",played);refresh();
+}
+function stopAll(){
+ session++;if(battleTimer!==null){clearInterval(battleTimer);battleTimer=null;}timers.forEach(id=>{clearTimeout(id);clearInterval(id)});timers=[];
+ battleOn=false;cricketOn=false;advancedOn=false;rapOn=false;
+}
+function later(fn,ms,token=session){
+ const id=setTimeout(()=>{if(token===session)fn()},ms);timers.push(id);return id;
+}
+function openGame(id){
+ stopAll();document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+ $(id).classList.add("active");
+ if(id==="match")startMatch();
+}
+function home(){
+ stopAll();document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+ $("home").classList.add("active");refresh();
+}
+function makeOptions(answer){
+ let list=[answer],spread=Math.max(5,Math.ceil(Math.abs(Number(answer)||5)*.3)),tries=0;
+ while(list.length<4&&tries++<100){
+  let v=Number(answer)+rand(-spread,spread);
+  if(v!==Number(answer)&&!list.includes(v))list.push(v);
+ }
+ while(list.length<4)list.push(Number(answer)+list.length+2);
+ return shuffle(list);
+}
+function renderAnswers(id,options,callback){
+ const box=$(id);box.innerHTML="";
+ options.forEach(value=>{
+  const btn=document.createElement("button");btn.className="answer";
+  btn.textContent=value;btn.type="button";btn.onclick=()=>callback(value,btn);
+  box.appendChild(btn);
+ });
+}
+function lock(id){$(id).querySelectorAll("button").forEach(b=>b.disabled=true)}
+function markCorrect(id,answer){
+ $(id).querySelectorAll("button").forEach(b=>{if(String(b.textContent)===String(answer))b.classList.add("good")});
+}
+function gcd(a,b){return b?gcd(b,a%b):a;}
+
+// BATTLE
+let battleOn=false,bScore=0,bLives=3,bTime=15,bCombo=0;
+function battleQuestion(){
+ let level=$("battleLevel").value,max={easy:15,medium:50,hard:100,expert:200}[level];
+ let a=rand(2,max),b=rand(2,max),op=shuffle(["+","−","×","÷","%"])[0],ans,txt;
+ if(op==="+"){ans=a+b;txt=`${a} + ${b} = ?`;}
+ else if(op==="−"){if(b>a)[a,b]=[b,a];ans=a-b;txt=`${a} − ${b} = ?`;}
+ else if(op==="×"){ans=a*b;txt=`${a} × ${b} = ?`;}
+ else if(op==="÷"){let divisor=rand(2,12),quotient=rand(2,max);ans=quotient;txt=`${quotient*divisor} ÷ ${divisor} = ?`;}
+ else {let p=[10,20,25,50][rand(0,3)];ans=p*a/100;txt=`${p}% of ${a} = ?`;}
+ return {ans,txt};
+}
+function startBattle(){
+ stopAll();battleOn=true;bScore=0;bLives=3;bCombo=0;$("bStart").style.display="none";battleNext();
+}
+function battleNext(){
+ if(!battleOn)return;
+ if(battleTimer!==null){clearInterval(battleTimer);battleTimer=null;}
+ bTime=15;const token=session,q=battleQuestion();
+ $("bQuestion").textContent=q.txt;$("bMessage").textContent="Choose the correct answer!";
+ $("bBar").style.width="100%";$("bTime").textContent=bTime;
+ $("bScore").textContent=bScore;$("bLives").textContent="❤️".repeat(bLives);
+ renderAnswers("bAnswers",makeOptions(q.ans),(v,btn)=>{
+  if(!battleOn)return;clearInterval(battleTimer);battleTimer=null;lock("bAnswers");
+  if(v===q.ans){bCombo++;let pts=10+(bCombo>=3?5:0);bScore+=pts;$("bMessage").textContent="🔥 Correct! +"+pts;markCorrect("bAnswers",q.ans);}
+  else{bLives--;bCombo=0;btn.classList.add("bad");markCorrect("bAnswers",q.ans);$("bMessage").textContent="Wrong! Answer: "+q.ans;}
+  $("bScore").textContent=bScore;$("bLives").textContent="❤️".repeat(bLives);
+  later(()=>bLives<=0?endBattle():battleNext(),850,token);
+ });
+ battleTimer=setInterval(()=>{
+  if(token!==session){clearInterval(battleTimer);battleTimer=null;return;}
+  bTime--;$("bTime").textContent=bTime;$("bBar").style.width=(bTime/15*100)+"%";
+  if(bTime<=0){
+   clearInterval(battleTimer);battleTimer=null;bLives--;bCombo=0;lock("bAnswers");
+   $("bLives").textContent="❤️".repeat(bLives);$("bMessage").textContent="⏰ Time up!";
+   later(()=>bLives<=0?endBattle():battleNext(),850,token);
+  }
+ },1000);timers.push(battleTimer);
+}
+function endBattle(){
+ battleOn=false;reward(bScore);$("bQuestion").textContent="🏆 GAME OVER";
+ $("bMessage").textContent="Final score: "+bScore;$("bStart").style.display="block";$("bStart").textContent="PLAY AGAIN";
+}
+
+// MATCH
+let matchDeck=[],selectedCard=null,moves=0,pairs=0,matchBusy=false;
+function startMatch(){
+ selectedCard=null;moves=0;pairs=0;matchBusy=false;
+ const deck=[];
+ for(let i=0;i<6;i++){let a=rand(2,12),b=rand(2,12);deck.push({id:i,type:"q",text:`${a} × ${b} = ?`},{id:i,type:"a",text:String(a*b)});}
+ matchDeck=shuffle(deck);$("mMoves").textContent="0";$("mPairs").textContent="0/6";
+ $("mMessage").textContent="Find all 6 matching pairs!";drawMatch();
+}
+function drawMatch(){
+ const grid=$("matchGrid");grid.innerHTML="";
+ matchDeck.forEach((card,index)=>{
+  const btn=document.createElement("button");btn.className="match-card";
+  if(card.found){btn.classList.add("matched");btn.textContent="✓";}
+  else{btn.textContent=card.open?card.text:"❓";if(card.open)btn.classList.add("selected");}
+  btn.onclick=()=>pickCard(index);grid.appendChild(btn);
+ });
+}
+function pickCard(index){
+ const card=matchDeck[index];if(matchBusy||card.found||card.open)return;
+ card.open=true;
+ if(selectedCard===null){selectedCard=index;drawMatch();return;}
+ const first=matchDeck[selectedCard];moves++;$("mMoves").textContent=moves;
+ if(first.id===card.id&&first.type!==card.type){
+  first.found=true;card.found=true;selectedCard=null;pairs++;
+  $("mPairs").textContent=pairs+"/6";$("mMessage").textContent="🎉 Match found!";drawMatch();
+  if(pairs===6){$("mMessage").textContent="🏆 YOU WON! Moves: "+moves;reward(Math.max(10,100-moves*3));}
+ }else{
+  matchBusy=true;drawMatch();$("mMessage").textContent="Not a match. Try again!";
+  const token=session;later(()=>{first.open=false;card.open=false;selectedCard=null;matchBusy=false;drawMatch();},800,token);
+ }
+}
+
+// CRICKET
+let cricketOn=false,runs=0,wickets=0,balls=0;
+function cricketStats(){$("runs").textContent=runs;$("wickets").textContent=wickets;$("balls").textContent=balls+"/12";}
+function cricketNext(){
+ if(!cricketOn)return;if(balls>=12||wickets>=3){endCricket();return;}
+ let a=rand(3,20),b=rand(2,15),op=shuffle(["+","×","−","÷"])[0],ans,txt;
+ if(op==="+"){ans=a+b;txt=`${a} + ${b} = ?`;}
+ else if(op==="×"){ans=a*b;txt=`${a} × ${b} = ?`;}
+ else if(op==="−"){if(b>a)[a,b]=[b,a];ans=a-b;txt=`${a} − ${b} = ?`;}
+ else{let d=rand(2,10),q=rand(2,15);ans=q;txt=`${q*d} ÷ ${d} = ?`;}
+ $("cQuestion").textContent=txt;$("cMessage").textContent="Answer correctly to hit!";
+ renderAnswers("cAnswers",makeOptions(ans),(v,btn)=>{
+  if(!cricketOn)return;lock("cAnswers");balls++;
+  if(v===ans){
+   let hit=shuffle([1,2,3,4,6])[0];runs+=hit;
+   $("cricketAction").textContent=hit===6?"🚀 SIX!":hit===4?"🔥 FOUR!":hit+" RUNS!";
+   $("batsman").textContent=hit===6?"🏏💥":"🏏";$("cMessage").textContent="Correct! +"+hit+" runs";
+   markCorrect("cAnswers",ans);
+  }else{
+   wickets++;btn.classList.add("bad");markCorrect("cAnswers",ans);
+   $("cricketAction").textContent="💥 WICKET!";$("batsman").textContent="😵";
+   $("cMessage").textContent="Out! Correct answer: "+ans;
+  }
+  cricketStats();const token=session;later(cricketNext,1100,token);
+ });
+ cricketStats();
+}
+function startCricket(){
+ stopAll();runs=0;wickets=0;balls=0;cricketOn=true;
+ $("batsman").textContent="🏏";$("cricketAction").textContent="MATCH STARTED!";
+ $("cStart").style.display="none";cricketStats();cricketNext();
+}
+function endCricket(){
+ cricketOn=false;reward(runs);$("cricketAction").textContent="🏆 INNINGS OVER";
+ $("cQuestion").textContent="FINAL SCORE: "+runs;$("cMessage").textContent=`${runs} runs in ${balls} balls!`;
+ $("cStart").style.display="block";$("cStart").textContent="PLAY AGAIN";
+}
+
+// ADVANCED MATHS
+let advancedOn=false,aScore=0,aCount=0;
+function advancedQuestion(topic){
+ if(topic==="all")topic=shuffle(["percent","square","power","fraction","algebra"])[0];
+ let a,b,ans,txt;
+ if(topic==="percent"){let p=[10,20,25,50,75][rand(0,4)],n=[40,60,80,100,200][rand(0,4)];ans=p*n/100;txt=`${p}% of ${n} = ?`;}
+ else if(topic==="square"){a=rand(2,15);if(Math.random()<.5){ans=a*a;txt=`${a}² = ?`;}else{ans=a;txt=`√${a*a} = ?`;}}
+ else if(topic==="power"){a=rand(2,5);b=rand(2,4);ans=a**b;txt=`${a} ^ ${b} = ?`;}
+ else if(topic==="fraction"){
+  a=rand(1,5);b=rand(2,8);let c=rand(1,5),d=rand(2,8);
+  let n=a*d+c*b,den=b*d,g=gcd(n,den);ans=`${n/g}/${den/g}`;
+  txt=`${a}/${b} + ${c}/${d} = ?`;
+  return{ans,txt,options:shuffle([ans,"1/2","2/3","3/4","1/3","5/6","3/5","4/5"]).slice(0,4).sort(()=>Math.random()-.5)};
+ }else{a=rand(2,12);b=rand(1,15);ans=a;txt=`If x + ${b} = ${a+b}, find x.`;}
+ return{ans,txt,options:makeOptions(ans)};
+}
+function startAdvanced(){stopAll();advancedOn=true;aScore=0;aCount=0;advancedNext();}
+function advancedNext(){
+ if(!advancedOn)return;
+ const q=advancedQuestion($("advTopic").value);$("aQuestion").textContent=q.txt;
+ $("aScore").textContent=aScore;$("aCount").textContent=aCount+1;
+ $("aMessage").textContent="Think carefully!";
+ renderAnswers("aAnswers",q.options,(v,btn)=>{
+  if(!advancedOn)return;lock("aAnswers");aCount++;
+  if(String(v)===String(q.ans)){aScore+=10;$("aMessage").textContent="✅ Brilliant!";markCorrect("aAnswers",q.ans);}
+  else{btn.classList.add("bad");markCorrect("aAnswers",q.ans);$("aMessage").textContent="Correct answer: "+q.ans;}
+  $("aScore").textContent=aScore;const token=session;
+  later(()=>{
+   if(aCount>=10){advancedOn=false;reward(aScore);$("aQuestion").textContent="🏆 CHALLENGE COMPLETE";$("aMessage").textContent="Final score: "+aScore;}
+   else advancedNext();
+  },900,token);
+ });
+}
+
+// RAP MATH (tap answer)
+let rapOn=false,rScore=0,rStreak=0;
+function startRap(){stopAll();rapOn=true;rScore=0;rStreak=0;rapNext();}
+function rapNext(){
+ if(!rapOn)return;
+ let a=rand(2,15),b=rand(2,12),op=shuffle(["+","×","−"])[0],ans,lyrics;
+ if(op==="+"){ans=a+b;lyrics=`Yo! ${a} and ${b} join the show,\nAdd them up, what's the flow?`;}
+ else if(op==="×"){ans=a*b;lyrics=`Beat is hot, let's make it stick,\n${a} times ${b}, what's the pick?`;}
+ else{if(b>a)[a,b]=[b,a];ans=a-b;lyrics=`Start with ${a}, take away ${b},\nFind the answer, show your energy!`;}
+ $("rapLine").textContent=lyrics;$("rScore").textContent=rScore;$("rStreak").textContent=rStreak;
+ $("rMessage").textContent="Tap the correct answer!";
+ renderAnswers("rAnswers",makeOptions(ans),(v,btn)=>{
+  if(!rapOn)return;lock("rAnswers");
+  if(v===ans){rStreak++;let pts=10+(rStreak>=3?5:0);rScore+=pts;$("rMessage").textContent="🔥 FLOW ON! +"+pts;markCorrect("rAnswers",ans);}
+  else{rStreak=0;btn.classList.add("bad");markCorrect("rAnswers",ans);$("rMessage").textContent="Correct answer: "+ans;}
+  $("rScore").textContent=rScore;$("rStreak").textContent=rStreak;
+  const token=session;later(()=>{
+   if(rScore>=100){rapOn=false;reward(rScore);$("rapLine").textContent="🏆 RAP CHAMPION!";$("rMessage").textContent="You scored "+rScore+" points!";}
+   else rapNext();
+  },1000,token);
+ });
+}
+refresh();
+</script>
+</body>
+</html>
